@@ -25,7 +25,7 @@ if (source === "concert-this") {
     spotifyThis(inputString);
 
 } else if (source === "do-what-it-says") {
-    doWhatItSays();
+    doWhatItSays(inputString);
 }
 
 
@@ -80,7 +80,7 @@ function spotifyThis(song) {
 
 function doWhatItSays() {
     fs.readFile('random.txt', 'utf8', function (error, data) {
-        data = data.split(",");
+        data = data.split(", ");
 
         if (data[0] === "spotify-this-song") {
             var song = data[1];
@@ -99,11 +99,11 @@ function doWhatItSays() {
                 })
             });
         } else if (data[0] === "movie-this") {
-            var movieUrl = "http://www.omdbapi.com/?t=" + inputString + "&y=&plot=short&apikey=trilogy";
+            var movie = data[1];
+            var movieUrl = "http://www.omdbapi.com/?t=" + movie + "&y=&plot=short&apikey=trilogy";
             request(movieUrl, function (error, response, body) {
                 if (!error && response.statusCode === 200) {
-                    var movie = JSON.parse(body);
-                    console.log("Movie Title: " + movie.Title);
+                    console.log("Movie Title: " + movie);
                     console.log("Year: " + JSON.parse(body).Year);
                     console.log("IMDB rating: " + JSON.parse(body).imdbRating);
                     console.log("Rotten Tomatoes rating: " + JSON.parse(body).Ratings[1]);
@@ -115,7 +115,8 @@ function doWhatItSays() {
                 }
             });
         } else if (data[0] === "concert-this") {
-            var concertURL = "https://rest.bandsintown.com/artists/" + inputString + "/events?app_id=codingbootcamp"
+            var band = data[1];
+            var concertURL = "https://rest.bandsintown.com/artists/" + band + "/events?app_id=codingbootcamp"
             request(concertURL, function (error, response, body) {
                 if (!error && response.statusCode === 200) {
                     var bandArray = JSON.parse(body)
@@ -124,9 +125,10 @@ function doWhatItSays() {
                         console.log("Venue city: ", event.venue.city)
                         console.log("Concert date: ", moment(event.datetime).format('l'))
                         console.log("----------------------------------------")
+                        //Concert-this works regularly but not inside of do-what-it-says
                     })
                 }
             });
-        }
+        };
     })
 }
