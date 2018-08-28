@@ -13,19 +13,34 @@ var spotify = new Spotify({
 var source = process.argv[2];
 var inputString = process.argv[3];
 
+function appendInfo() {
+    fs.appendFile("log.txt", source + ", " + inputString + '\r\n', function (error, data) {
+        if (error) {
+            console.log(error);
+        } else {
+            console.log("Content added to log.txt file");
+            console.log("----------------------------------------")
+        }
+    })
+};
+
 console.log("----------------------------------------")
 
 if (source === "concert-this") {
     concertThis(inputString);
+    appendInfo();
 
 } else if (source === "movie-this") {
     movieThis(inputString);
+    appendInfo();
 
 } else if (source === "spotify-this-song") {
     spotifyThis(inputString);
+    appendInfo();
 
 } else if (source === "do-what-it-says") {
     doWhatItSays(inputString);
+    appendInfo();
 }
 
 
@@ -51,7 +66,7 @@ function movieThis(movie) {
             console.log("Movie Title: " + movie.Title);
             console.log("Year: " + JSON.parse(body).Year);
             console.log("IMDB rating: " + JSON.parse(body).imdbRating);
-            console.log("Rotten Tomatoes rating: " + JSON.parse(body).Ratings[1]);
+            console.log("Rotten Tomatoes rating: " + JSON.parse(body).Ratings[1].Value);
             console.log("Country: " + JSON.parse(body).Country);
             console.log("Language: " + JSON.parse(body).Language);
             console.log("Plot: " + JSON.parse(body).Plot);
@@ -106,7 +121,7 @@ function doWhatItSays() {
                     console.log("Movie Title: " + movie);
                     console.log("Year: " + JSON.parse(body).Year);
                     console.log("IMDB rating: " + JSON.parse(body).imdbRating);
-                    console.log("Rotten Tomatoes rating: " + JSON.parse(body).Ratings[1]);
+                    console.log("Rotten Tomatoes rating: " + JSON.parse(body).Ratings[1].Value);
                     console.log("Country: " + JSON.parse(body).Country);
                     console.log("Language: " + JSON.parse(body).Language);
                     console.log("Plot: " + JSON.parse(body).Plot);
@@ -119,6 +134,7 @@ function doWhatItSays() {
             var concertURL = "https://rest.bandsintown.com/artists/" + band + "/events?app_id=codingbootcamp"
             request(concertURL, function (error, response, body) {
                 if (!error && response.statusCode === 200) {
+
                     var bandArray = JSON.parse(body)
                     bandArray.forEach(function (event) {
                         console.log("Venue name: ", event.venue.name)
@@ -132,3 +148,4 @@ function doWhatItSays() {
         };
     })
 }
+
